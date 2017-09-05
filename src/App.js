@@ -1,95 +1,86 @@
-import React, {Component} from 'react'
-import './App.css'
-import 'bootstrap/dist/css/bootstrap.css'
-import CardComponent from './components/CardComponent'
-import CountrySearchBoxComponent from './components/CountrySearchBoxComponent'
-import MyCountriesListComponent from './components/MyCountriesListComponent'
-import {componentMessage} from './utils/index'
+import React, {Component} from 'react';
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.css';
+import CardComponent from './components/CardComponent';
+import CountrySearchBoxComponent from './components/CountrySearchBoxComponent';
+import MyCountriesListComponent from './components/MyCountriesListComponent';
+import logLifecycle from './hoc/LogLifecycle';
 
 class App extends Component {
 
     constructor() {
-        super()
+        super();
         this.state = {
-            myCountries: [
-
-            ]
-        }
-        this.toggleFavorite = this.toggleFavorite.bind(this)
-        this.addCountry = this.addCountry.bind(this)
-        this.removeCountry = this.removeCountry.bind(this)
-    }
-
-    componentDidMount() {
-        componentMessage('App', 'Mounted')
-    }
-
-    componentWillUnmount() {
-        componentMessage('App', 'Unmounted')
+            myCountries: []
+        };
+        this.toggleFavorite = this.toggleFavorite.bind(this);
+        this.addCountry = this.addCountry.bind(this);
+        this.removeCountry = this.removeCountry.bind(this);
     }
 
     addCountry(country) {
-        let id = Math.random()
-        const newCountry = {id: id, name: country, isFav: false}
-        const myCountries = [...this.state.myCountries, newCountry]
-        this.setState({
-            myCountries
-        })
+        let existingCountry;
+        existingCountry = this.state.myCountries.find(myCountry =>
+            myCountry.id === country.id || myCountry.name === country.countryName);
+        if (!existingCountry) {
+            const newCountry = {id: country.id, name: country.countryName, isFav: false};
+            const myCountries = [...this.state.myCountries, newCountry];
+            this.setState({myCountries});
+        } else {
+            console.log('Country is already in the list')
+        }
     }
 
     toggleFavorite(id) {
-        // const editedCountry = this.state.myCountries[cIndex]
-        // console.log(editedCountry)
-        // editedCountry.isFav = !editedCountry.isFav
         const myCountries = this.state.myCountries.map((country) => {
-            console.log('index' + country.id)
-            console.log('cindex' + id)
             if (country.id === id) {
-                country.isFav = !country.isFav
+                return {
+                    ...country,
+                    isFav: !country.isFav
+                };
             }
-            return country
-        })
-        // const myCountries = [this.state.myCountries.slice(0, index), editedCountry, this.state.myCountries.slice(index+1, this.state.myCountries.length)]
+            return country;
+        });
         this.setState(({
             myCountries
-        }))
+        }));
     }
 
     removeCountry(id) {
         const myCountries = this.state.myCountries.filter(country => {
-            return country.id !== id
-        })
+            return country.id !== id;
+        });
         this.setState({
             myCountries
-        })
+        });
     }
 
     render() {
-        const {myCountries} = this.state
+        const {myCountries} = this.state;
 
-        const myNonFavoriteCountries = myCountries.filter(country => country.isFav === false)
-
-        const myFavoriteCountries = myCountries.filter((country) => country.isFav === true)
+        const sortedCountries = myCountries.sort((countryA, countryB) => countryA.name > countryB.name ? 1 : -1);
+        const myFavoriteCountries = sortedCountries.filter((country) => country.isFav === true);
 
         return (
             <div className="App container">
                 <div className="card-group mt-lg-4 ">
                     <CardComponent title="My Countries">
                         <CountrySearchBoxComponent addCountry={this.addCountry}/>
-                        <MyCountriesListComponent countries={myNonFavoriteCountries} removeCountry={this.removeCountry}
+                        <MyCountriesListComponent countries={sortedCountries} removeCountry={this.removeCountry}
                                                   toggleFavorite={this.toggleFavorite}/>
                     </CardComponent>
 
                     <div className="col-2"/>
 
                     <CardComponent title="My Favorites">
+                        <div className="min-height"/>
                         <MyCountriesListComponent countries={myFavoriteCountries} removeCountry={this.removeCountry}
                                                   toggleFavorite={this.toggleFavorite}/>
                     </CardComponent>
                 </div>
             </div>
-        )
+        );
     }
 }
 
-export default App
+export default logLifecycle(App);

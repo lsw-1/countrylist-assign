@@ -1,23 +1,25 @@
-.App {
-  text-align: center;
-}
 
-.App-logo {
+
+.icon {
   height: 50%;
-  color: gray;
+  opacity: 0.5;
 }
 
-.App-logo:hover {
-  height: 60%;
-}
-
-.zzindex {
-  z-index: 100;
+.icon:hover {
+  opacity: 1;
 }
 
 .hover:hover {
-  background-color: azure;
+  background-color: lightgray;
   ;
+}
+
+.countries-list{
+  min-height: 300px;
+}
+
+.min-height {
+  min-height: 50px;
 }
 
 .App-header {

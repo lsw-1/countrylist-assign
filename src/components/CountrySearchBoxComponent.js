@@ -1,57 +1,65 @@
-import React from 'react'
-import PlacesAutocomplete, {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
-import {componentMessage} from '../utils/index'
+import React from 'react';
+import PropTypes from 'prop-types';
+import PlacesAutocomplete, {geocodeByAddress} from 'react-places-autocomplete';
+import logLifecycle from '../hoc/LogLifecycle';
 
 
 class CountrySearchBoxComponent extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {address: ''}
-        this.onChange = (address) => this.setState({address})
-    }
-
+    state = {address: ''};
+    onChange = (address) => {
+        this.setState({address});
+    };
     handleFormSubmit = (event) => {
-        event.preventDefault()
-
-        this.props.addCountry(this.state.address)
-
+        event.preventDefault();
         geocodeByAddress(this.state.address)
-            .then(results => getLatLng(results[0]))
-            .then(latLng => console.log('Success', latLng))
-            .catch(error => console.error('Error', error))
-    }
+            .then(results => {
+                let countryName = this.state.address;
+                try {
+                    countryName = results[0]
+                        .address_components[results[0].address_components.length - 1]
+                        .long_name || results[0].formatted_address;
+                } catch (err) {
+                    console.log('couldnt find location');
+                }
+                const id = results[0].place_id || Math.random();
+                return {countryName, id};
+            }).then(
+            answer => this.props.addCountry(answer)
+        )
+            .catch(error => console.error(error));
+    };
 
     render() {
+        const {address} = this.state;
+
         const inputProps = {
-            value: this.state.address,
+            value: address,
             onChange: this.onChange,
-        }
+            placeholder: 'search for country'
+        };
+
+        const autoCompleteStyles = {
+            autocompleteContainer: {zIndex: 100},
+        };
 
         return (
-            <form className="" onSubmit={this.handleFormSubmit}>
+            <form onSubmit={this.handleFormSubmit}>
                 <div className="col-8 d-inline-block">
-                    <PlacesAutocomplete className="d-inline-block" inputProps={inputProps}/>
+                    <PlacesAutocomplete styles={autoCompleteStyles} inputProps={inputProps} options={{
+                        types: ['(regions)']
+                    }}/>
                 </div>
                 <button className="btn-primary btn" type="submit">Add +</button>
             </form>
-        )
+        );
     }
-
-    componentDidMount() {
-        console.log('CountrySearchBoxComponent', 'mounted')
-    }
-
-    componentDidUpdate() {
-        componentMessage('CountrySearchBoxComponent', 'updated')
-    }
-
-    componentWillUnmount() {
-        componentMessage('CountrySearchBoxComponent', 'removed')
-    }
-
 }
 
-export default CountrySearchBoxComponent
+CountrySearchBoxComponent.propTypes = {
+    addCountry: PropTypes.func.isRequired
+};
+
+export default logLifecycle(CountrySearchBoxComponent);
 
 
 
