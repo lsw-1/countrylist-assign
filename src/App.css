@@ -3,7 +3,21 @@
 }
 
 .App-logo {
-  height: 40px;
+  height: 50%;
+  color: gray;
+}
+
+.App-logo:hover {
+  height: 60%;
+}
+
+.zzindex {
+  z-index: 100;
+}
+
+.hover:hover {
+  background-color: azure;
+  ;
 }
 
 .App-header {

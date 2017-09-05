@@ -8,7 +8,7 @@ class MyCountriesListComponent extends Component {
         super()
         this.state = {
             currentPage: 1,
-            countriesPerPage: 5
+            countriesPerPage: 10
         }
         this.onNext = this.onNext.bind(this)
         this.onPrevious = this.onPrevious.bind(this)
@@ -37,24 +37,24 @@ class MyCountriesListComponent extends Component {
 
     render() {
         const {currentPage, countriesPerPage} = this.state
-        const {countries} = this.props
+        const {countries, toggleFavorite, removeCountry } = this.props
 
         const indexOfLastCountry = currentPage * countriesPerPage;
         const indexOfFirstCountry = indexOfLastCountry - countriesPerPage;
         const pagedCountries = countries.slice(indexOfFirstCountry, indexOfLastCountry)
 
-        const mappedCountryList = pagedCountries.sort(country => country.name).map((country, index) => {
-                return <CountryItemComponent key={index} index={index} name={country.name} isFavorite={country.isFav}
-                                             toggleFavorite={this.props.toggleFavorite}/>
+        const mappedCountryList = pagedCountries.map((country, index) => {
+                return <CountryItemComponent key={index} country={country}
+                                             toggleFavorite={toggleFavorite} removeCountry={removeCountry}/>
             }
         )
 
-        return (
+return (
             <div>
                 <div className="list-group">
                     {mappedCountryList}
                 </div>
-                <div className="col-12 btn-group list-group-item">
+                <div style={{display: this.state.currentPage * this.state.countriesPerPage <= 10 ? "none" : "inline-block" }} className="col-12 btn-group mt-sm-4">
                     <button onClick={this.onPrevious} className="btn btn-primary col-4">prev page</button>
                     <div className="col-2"/>
                     <button onClick={this.onNext} className="btn btn-primary col-4">next page</button>
@@ -67,7 +67,7 @@ class MyCountriesListComponent extends Component {
 }
 
 MyCountriesListComponent.propTypes = {
-    countries: PropTypes.array.isRequired
+    countries: PropTypes.array
 }
 
 export default MyCountriesListComponent

@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import star from '../assets/Gpritiranjan-Simple-Christmas-Star.ico'
+import stargrey from '../assets/star-2-xxl.png'
 import garbage from '../assets/garbage-bin-png-1.png'
 import {componentMessage} from '../utils/index'
 
@@ -8,6 +9,7 @@ class CountryItemComponent extends Component {
 
     constructor() {
         super()
+        this.state = {}
     }
 
     componentDidMount() {
@@ -15,25 +17,23 @@ class CountryItemComponent extends Component {
     }
 
     componentDidUpdate() {
-        componentMessage(CountryItemComponent.toString, 'updated')
+        componentMessage('CountryItemComponent', 'updated')
     }
 
-    handleClick(){
-        this.props.toggleFavorite(this.props.index)
+    componentWillUnmount() {
+        componentMessage('CountryItemComponent', 'removed')
     }
 
     render() {
-        const {isfavorite, index, name, toggleFavorite} = this.props
-        const favoriteStar = isfavorite ? <img className="App-logo" src={star} alt="star"/> :
-            <img className="App-logo" src={star} alt="star"/>
+        const { country, toggleFavorite, removeCountry } = this.props
+        const favoriteStar = country.isFav ? <img className="App-logo col-2" src={star} alt="star"/> :
+            <img className="App-logo col-2"  onClick={() => toggleFavorite(country.id)} src={stargrey} alt="star"/>
 
         return (
-            <div onClick={this.handleClick} className="col-12 list-group list-group-item">
-                <p className=""> {name} </p>
-                <div>
+            <div className="col-12 hover">
+                <p className="col-6 d-inline-block mr-5"> {country.name} </p>
                     {favoriteStar}
-                    <img className="App-logo" src={garbage} alt="garbage"/>
-                </div>
+                    <img className="col-2 App-logo" src={garbage} onClick={() => removeCountry(country.id)} alt="garbage"/>
             </div>
         )
     }
