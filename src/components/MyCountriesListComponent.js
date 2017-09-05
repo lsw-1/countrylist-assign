@@ -49,8 +49,8 @@ class MyCountriesListComponent extends Component {
 
 
         return (
-            <div className="mb-0">
-                <div className="list-group ml-2 countries-list">
+            <div className="mb-0 rounded">
+                <div className="list-group ml-2 countries-list border  rounded mb-4 mt-4">
                     {mappedCountryList}
                 </div>
                 <div className="col-12 btn-group">

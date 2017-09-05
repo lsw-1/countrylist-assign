@@ -44,7 +44,7 @@ class CountrySearchBoxComponent extends React.Component {
 
         return (
             <form onSubmit={this.handleFormSubmit}>
-                <div className="col-8 d-inline-block">
+                <div className="col-9 d-inline-block">
                     <PlacesAutocomplete styles={autoCompleteStyles} inputProps={inputProps} options={{
                         types: ['(regions)']
                     }}/>
